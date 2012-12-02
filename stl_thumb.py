@@ -47,6 +47,7 @@ def parse_stl(name):
 	stlfile = open(name)
 
 	maxPos = [0,0,0]
+	minPos = [float("inf"),float("inf"),float("inf")]
 	inFacet=False
 	inLoop=False
 	i = -1
@@ -92,6 +93,11 @@ def parse_stl(name):
 					if x > maxPos[0]: maxPos[0] = x
 					if y > maxPos[1]: maxPos[1] = y
 					if z > maxPos[2]: maxPos[2] = z
+
+					if x < minPos[0]: minPos[0] = x
+					if y < minPos[1]: minPos[1] = y
+					if z < minPos[2]: minPos[2] = z
+
 					triangles[i].append((x,y,z))
 		else:
 
@@ -111,6 +117,11 @@ def parse_stl(name):
 					if x > maxPos[0]: maxPos[0] = x
 					if y > maxPos[1]: maxPos[1] = y
 					if z > maxPos[2]: maxPos[2] = z
+
+					if x < minPos[0]: minPos[0] = x
+					if y < minPos[1]: minPos[1] = y
+					if z < minPos[2]: minPos[2] = z
+
 					triangles[i].append((x,y,z))
 
 				attributes = struct.unpack("h" ,stlfile.read(2))[0]
@@ -121,7 +132,7 @@ def parse_stl(name):
 		sys.exit(-1)
 
 
-	return (triangles, maxPos)
+	return (triangles, maxPos, minPos)
 
 
 
@@ -171,7 +182,7 @@ def display():
 	"""
 
 	# Read stl file
-	(triangles, maxPos) = parse_stl(inputfile)
+	(triangles, maxPos, minPos) = parse_stl(inputfile)
 
 
 
@@ -234,16 +245,16 @@ def display():
 
 	glBegin( GL_TRIANGLES )
 	glNormal3d(0,0,1)
-	glVertex3f(2000,-2000,-1)
-	glVertex3f(-2000,2000,-1)
-	glVertex3f(-2000,-2000,-1)
+	glVertex3f(2000,-2000,minPos[2]-2)
+	glVertex3f(-2000,2000,minPos[2]-2)
+	glVertex3f(-2000,-2000,minPos[2]-2)
 	glEnd( )
 
 	glBegin( GL_TRIANGLES )
 	glNormal3d(0,0,1)
-	glVertex3f(-2000,2000,-1)
-	glVertex3f(2000,-2000,-1)
-	glVertex3f(2000,2000,-1)
+	glVertex3f(-2000,2000,minPos[2]-2)
+	glVertex3f(2000,-2000,minPos[2]-2)
+	glVertex3f(2000,2000,minPos[2]-2)
 	glEnd( )
 
 
@@ -257,8 +268,8 @@ def display():
 
 		glBegin( GL_LINES )
 		glNormal3d(0,0,1)
-		glVertex3f( -1000, (i-gridSize/2)*gridSpacing, 0 )
-		glVertex3f( 1000, (i-gridSize/2)*gridSpacing, 0 )
+		glVertex3f( -1000, (i-gridSize/2)*gridSpacing, minPos[2]-1 )
+		glVertex3f( 1000, (i-gridSize/2)*gridSpacing, minPos[2]-1 )
 		glEnd( )
 
 		# lines parallel to y-axis
@@ -266,8 +277,8 @@ def display():
 
 		glBegin( GL_LINES )
 		glNormal3d(0,0,1)
-		glVertex3f( (i-gridSize/2)*gridSpacing, -1000, 0 )
-		glVertex3f( (i-gridSize/2)*gridSpacing, 1000, 0 )
+		glVertex3f( (i-gridSize/2)*gridSpacing, -1000, minPos[2]-1 )
+		glVertex3f( (i-gridSize/2)*gridSpacing, 1000, minPos[2]-1 )
 		glEnd( )
 
 
