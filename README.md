@@ -1,0 +1,1 @@
+thumbnail generator for the STL 3D file format
